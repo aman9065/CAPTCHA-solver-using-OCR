@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Page</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    .captcha-section { display: flex; align-items: center; gap: 10px; }
+    button.reload-btn { padding: 4px 10px; }
+  </style>
+</head>
+<body>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul>
+        {% for message in messages %}
+          <li style="color: red;">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  <form class="login-box" action="{{ url_for('login') }}" method="post">
+    <h2>🅻🅾🅶🅸🅽</h2>
+    <input type="text" name="username" placeholder="Enter Username" required>
+    <input type="password" name="password" placeholder="Enter Password" required>
+
+    <div class="captcha-section">
+      <img id="captcha-img" src="{{ url_for('static', filename='captcha9.png') }}" alt="CAPTCHA" width="150">
+      <button type="button" class="reload-btn" onclick="reloadCaptcha()">↻</button>
+    </div>
+
+    <input type="text" name="captcha" placeholder="Enter CAPTCHA" required>
+    <button type="submit">Login</button>
+    <a href="{{ url_for('signup') }}">Sign up</a> (Don't have an account?)
+  </form>
+
+  <script>
+    function reloadCaptcha() {
+      fetch('/refresh')
+        .then(response => response.text())
+        .then(() => {
+          const img = document.getElementById('captcha-img');
+          img.src = "{{ url_for('static', filename='captcha9.png') }}" + '?t=' + new Date().getTime();
+        })
+        .catch(error => console.error('CAPTCHA reload error:', error));
+    }
+  </script>
+</body>
+</html>
+
+
+

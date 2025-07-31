@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signup Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='SINGUP.css') }}">
+</head>
+<body>
+    <div class="signup-container">
+        <h2>Create an Account</h2>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Signup Form -->
+        <form action="{{ url_for('signup') }}" method="POST">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="Email">email</label>
+            <input type="enter email" id="email" name="email" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="confirm_password">Confirm Password</label>
+            <input type="password" id="confirm_password" name="confirm_password" required>
+
+            <button type="submit">Sign Up</button>
+        </form>
+
+        <p>Already have an account? <a href="{{ url_for('generate_captcha') }}">Login</a></p>
+    </div>
+</body>
+</html>
+
+
+

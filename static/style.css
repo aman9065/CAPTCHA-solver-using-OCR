@@ -1,0 +1,64 @@
+body {
+  background-color: whitesmoke; 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.login-box {
+  background-color: white;
+  padding: 20px;
+  width: 300px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgb(37, 50, 62);
+}
+
+.login-box h2 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 8px;
+  margin: 10px 0;
+  box-sizing: border-box;
+  background-color: #f0f0f028;  /* 👈 Background for username and password input */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.captcha-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.captcha-section img {
+  height: 40px;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 10px;
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.login-box button:hover {
+  background-color: #d74070;
+}
+
+.login-box input::placeholder {
+  color: black;
+}
