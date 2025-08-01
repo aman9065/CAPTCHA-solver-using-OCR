@@ -129,11 +129,11 @@ def login():
         if user:
             db_password = user[2]
             if bcrypt.checkpw(password.encode('utf-8'), db_password.encode('utf-8')):
-                session['username'] = username
+                session['username'] = username,password
                 flash("Login successful!", "success")
                 return redirect(url_for('login'))
             else:
-                flash("Invalid password.", "danger")
+                flash("Invalid username password.", "danger")
         else:
             flash("User not found.", "danger")
         return redirect(url_for('generate_captcha'))
