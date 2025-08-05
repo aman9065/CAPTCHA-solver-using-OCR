@@ -1,153 +1,155 @@
-# app.py
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_mysqldb import MySQL
-from wtforms import Form, StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Email
+from flask import make_response
+
 import bcrypt
 import random
 import string
 import os
-from captcha.image import ImageCaptcha
-from PIL import Image
-import pytesseract
-from PIL import ImageFilter,ImageDraw,ImageFont
+from PIL import Image, ImageDraw, ImageFont
 
-from captcha.image import ImageCaptcha
-
-class CleanImageCaptcha(ImageCaptcha):
-    def create_noise_dots(self, image, color):
-        pass  
-
-    def create_noise_curve(self, image, color):
-        pass 
-
-image = CleanImageCaptcha(width=160, height=60, font_sizes=[50])
-
-
-# Flask app and configuration
 app = Flask(__name__)
 app.secret_key = "Aman123@56zw"
+
+
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'helloaman'
+app.config['MYSQL_DB'] = 'project captcha'
+
 mysql = MySQL(app)
 
-# WTForms
-class SignupForm(Form):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    submit = SubmitField('Signup')
 
-class LoginForm(Form):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Login')
 
-@app.route('/')
-def home():
-    return redirect(url_for('generate_captcha'))
-
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    form = SignupForm(request.form)
-    if request.method == 'POST' and form.validate():
-        username = form.username.data
-        password = form.password.data
-        confirm_password = form.confirm_password.data
-        email = form.email.data
-
-        if password != confirm_password:
-            flash("Passwords do not match!", "danger")
-            return redirect(url_for('signup'))
-
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-
-        cursor = mysql.connection.cursor()
-        cursor.execute("INSERT INTO captcha (username, email, password) VALUES (%s, %s, %s)", (username, email, hashed_password))
-        mysql.connection.commit()
-        cursor.close()
-
-        flash("Signup successful. Please login.", "success")
-        return redirect(url_for('generate_captcha'))
-
-    return render_template('signup.html', form=form)
-
-@app.route('/generate')
 def generate_captcha():
-    captcha_text = ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))  # Use correct attribute: digits
+    import random, string, os
+    from PIL import Image, ImageDraw, ImageFont
+    from flask import session
+
+    # 1. Generate random CAPTCHA text
+    captcha_text = ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
+
+    # 2. Create white image
     width, height = 160, 50
     image = Image.new('RGB', (width, height), color='white')
     draw = ImageDraw.Draw(image)
+    font = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", 36)
 
-    # Use a font available on your system — update this if needed
-    font_path = "C:/Windows/Fonts/arial.ttf"  # For Windows
-    font = ImageFont.truetype(font_path, 36)
-
+    # 3. Draw text on image
     x = 10
     for char in captcha_text:
         draw.text((x, 5), char, font=font, fill='black')
         x += 30
 
-    
+    # 4. Save image to static folder
     os.makedirs("static", exist_ok=True)
+    image.save("static/captcha9.png")
 
-    image_path = "static/captcha9.png"  
-    image.save(image_path)
-
-    session['captcha'] = captcha_text
-    print("Generated CAPTCHA Text:", captcha_text)
-    return render_template("index.html")
-
-
+    with open("static/captcha_text.txt", "w") as f:
+        f.write(captcha_text)
+    # 5. Store text in session
+    session['captcha_text'] = captcha_text
+    print("CAPTCHA Generated:", captcha_text)
 
 
 
+@app.route('/')
+def home():
+    return redirect(url_for('login'))
 
+@app.route('/generate')
+def generate():
+    generate_captcha()
+    return '', 204
 
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        data = {
+            'first_name': request.form.get('first_name'),
+            'middle_name': request.form.get('middle_name') or '',
+            'last_name': request.form.get('last_name'),
+            'username': request.form.get('username'),
+            'email': request.form.get('email'),
+            'password': request.form.get('password'),
+            'confirm': request.form.get('confirm_password')
+        }
 
+        if not all([data['first_name'], data['last_name'], data['username'], data['email'], data['password'], data['confirm']]):
+            flash("Please fill all required fields.", "danger")
+            return redirect(url_for('signup'))
 
+        if data['password'] != data['confirm']:
+            flash("Passwords do not match!", "danger")
+            return redirect(url_for('signup'))
+
+        
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT * FROM user_table WHERE username = %s OR email = %s", (data['username'], data['email']))
+        existing_user = cursor.fetchone()
+
+        if existing_user:
+            flash("Username or Email already exists. Please choose another.", "danger")
+            cursor.close()
+            return redirect(url_for('signup'))
+
+        
+        hashed_password = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        cursor.execute("""
+            INSERT INTO user_table (first_name, middle_name, last_name, username, email, password)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (data['first_name'], data['middle_name'], data['last_name'], data['username'], data['email'], hashed_password))
+        mysql.connection.commit()
+        cursor.close()
+        flash("Signup successful. Please login.", "success")
+        return redirect(url_for('login'))
+    return render_template('signup.html')
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    form = LoginForm(request.form)
-    if request.method == 'POST' and form.validate():
-        username = form.username.data
-        password = form.password.data
-        user_input = request.form.get('captcha')
-
-        if user_input != session.get('captcha'):
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user_input = request.form.get('captcha')  
+        if user_input != session.get('captcha_text'):
             flash("Incorrect CAPTCHA", "danger")
-            return redirect(url_for('generate_captcha'))
-
+            generate_captcha()
+            return redirect(url_for('login'))
         cursor = mysql.connection.cursor()
-        cursor.execute("SELECT * FROM captcha WHERE username = %s", (username,))
+        cursor.execute("SELECT * FROM user_table WHERE username = %s", (username,))
         user = cursor.fetchone()
         cursor.close()
-
         if user:
-            db_password = user[2]
+            db_password = user[6]
             if bcrypt.checkpw(password.encode('utf-8'), db_password.encode('utf-8')):
-                session['username'] = username,password
+                session['username'] = username
                 flash("Login successful!", "success")
-                return redirect(url_for('login'))
+                return redirect(url_for('success'))
             else:
-                flash("Invalid username password.", "danger")
+                flash("Invalid username or password.", "danger")
         else:
             flash("User not found.", "danger")
-        return redirect(url_for('generate_captcha'))
-
-    return render_template('success.html', form=form)
-
+        generate_captcha()
+        return redirect(url_for('login'))
+    generate_captcha()
+    response = make_response(render_template('index.html'))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 @app.route('/success')
 def success():
-    return('success.html')
-
-@app.route('/refresh')
-def refresh():
-    return redirect(url_for('generate_captcha'))
+    if 'username' in session:
+        return render_template('success.html')
+    else:
+        flash("Unauthorized access.", "danger")
+        return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True, port=7000)
+
+
+
+
+
+
   

@@ -1,5 +1,6 @@
+/* Body and container styling */
 body {
-  background-color: whitesmoke; 
+  background-color: whitesmoke;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -11,6 +12,51 @@ body {
   margin: 0;
 }
 
+/* Flash message at top of the page */
+.flash-message {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  font-size: 15px;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  animation: fadeOut 0.5s ease-out 2.5s forwards;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Flash message success (green) */
+.flash-message.alert-success {
+  background-color: rgb(21, 219, 21);
+  color: rgb(9, 9, 9);
+}
+
+/* Flash message error (red) */
+.flash-message.alert-danger {
+  background-color: red;
+  color: white;
+}
+.flash.success {
+    color: green;
+    background-color: #209120; /* light green background */
+    padding: 10px;
+    border: 1px solid green;
+    border-radius: 5px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* Login form container */
 .login-box {
   background-color: white;
   padding: 20px;
@@ -24,16 +70,22 @@ body {
   margin-bottom: 15px;
 }
 
+/* Input fields */
 .login-box input {
   width: 100%;
   padding: 8px;
   margin: 10px 0;
   box-sizing: border-box;
-  background-color: #f0f0f028;  /* 👈 Background for username and password input */
+  background-color: #f0f0f028;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
+.login-box input::placeholder {
+  color: black;
+}
+
+/* CAPTCHA section */
 .captcha-section {
   display: flex;
   justify-content: space-between;
@@ -44,6 +96,7 @@ body {
   height: 40px;
 }
 
+/* Button styling */
 .login-box button {
   width: 100%;
   padding: 10px;
@@ -56,9 +109,8 @@ body {
 }
 
 .login-box button:hover {
-  background-color: #d74070;
+  background-color: #6e3bf2;
 }
 
-.login-box input::placeholder {
-  color: black;
-}
+
+

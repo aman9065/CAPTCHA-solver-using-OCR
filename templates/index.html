@@ -4,25 +4,23 @@
   <meta charset="UTF-8">
   <title>Login Page</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <style>
-    .captcha-section { display: flex; align-items: center; gap: 10px; }
-    button.reload-btn { padding: 4px 10px; }
-  </style>
 </head>
 <body>
 
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <ul>
-        {% for message in messages %}
-          <li style="color: red;">{{ message }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
+  <!-- Flash Messages -->
+ {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="flash-message {{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 
+
+  <!-- Login Form -->
   <form class="login-box" action="{{ url_for('login') }}" method="post">
-    <h2>🅻🅾🅶🅸🅽</h2>
+    <h2>LOGIN</h2>
+
     <input type="text" name="username" placeholder="Enter Username" required>
     <input type="password" name="password" placeholder="Enter Password" required>
 
@@ -32,23 +30,39 @@
     </div>
 
     <input type="text" name="captcha" placeholder="Enter CAPTCHA" required>
+
     <button type="submit">Login</button>
-    <a href="{{ url_for('signup') }}">Sign up</a> (Don't have an account?)
+
+    <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign up</a></p>
   </form>
 
   <script>
     function reloadCaptcha() {
-      fetch('/refresh')
-        .then(response => response.text())
+      fetch('/generate')
         .then(() => {
           const img = document.getElementById('captcha-img');
           img.src = "{{ url_for('static', filename='captcha9.png') }}" + '?t=' + new Date().getTime();
-        })
-        .catch(error => console.error('CAPTCHA reload error:', error));
+        });
     }
+
+    window.onload = function () {
+      reloadCaptcha();
+    };
+
+    setTimeout(() => {
+      document.querySelectorAll('.flash-message').forEach(msg => msg.style.display = 'none');
+    }, 3000);
   </script>
+
 </body>
 </html>
+
+
+
+
+
+
+
 
 
 

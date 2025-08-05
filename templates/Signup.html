@@ -22,11 +22,20 @@
 
         <!-- Signup Form -->
         <form action="{{ url_for('signup') }}" method="POST">
+            <label for="first_name">First Name</label>
+            <input type="text" id="first_name" name="first_name" required>
+
+            <label for="middle_name">Middle Name</label>
+            <input type="text" id="middle_name" name="middle_name">
+
+            <label for="last_name">Last Name</label>
+            <input type="text" id="last_name" name="last_name" required>
+
             <label for="username">Username</label>
             <input type="text" id="username" name="username" required>
             
-            <label for="Email">email</label>
-            <input type="enter email" id="email" name="email" required>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
 
             <label for="password">Password</label>
             <input type="password" id="password" name="password" required>
@@ -37,10 +46,21 @@
             <button type="submit">Sign Up</button>
         </form>
 
-        <p>Already have an account? <a href="{{ url_for('generate_captcha') }}">Login</a></p>
+        <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
     </div>
+
+    <!-- Flash Message Auto-Hide Script -->
+    <script>
+        setTimeout(function() {
+            document.querySelectorAll('.alert').forEach(function(el) {
+                el.style.display = 'none';
+            });
+        }, 5000);
+    </script>
 </body>
 </html>
+
+
 
 
 
