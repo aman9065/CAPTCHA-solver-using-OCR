@@ -42,3 +42,18 @@ It also includes login/signup functionality with password hashing and MySQL data
 │ ├── SINGUP.css
 │ └── captcha9.png (sample image)
 └── README.md
+
+ Reading Accuracy Analysis
+
+Noise levels were increased from 10% to 90%, and OCR accuracy was tracked. Below is a summary:
+
+| Noise Level | Accuracy         |
+|-------------|------------------|
+| 10%         | ~90%             |
+| 25% + color | ~75-80%          |
+| 50% + color | ~60-65%          |
+| 75%         | ~45%             |
+| 90%         | Failed (1–2 chars unreadable) |
+
+📄 **[Click here to download the full Reading Accuracy Report](static/READING ACCURACY.pdf)**  
+*(Includes all screenshots and detailed explanation)*
