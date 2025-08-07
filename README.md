@@ -43,6 +43,8 @@ It also includes login/signup functionality with password hashing and MySQL data
 │ └── captcha9.png (sample image)
 └── README.md
 
+---
+
 ## Reading Accuracy Analysis
 
 Noise levels were increased from 10% to 90%, and OCR accuracy was tracked. Below is a summary:
