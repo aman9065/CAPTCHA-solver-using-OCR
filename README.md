@@ -31,6 +31,7 @@ It also includes login/signup functionality with password hashing and MySQL data
 ## 📁 Project Structure
 
 📦 CAPTCHA-solver-using-OCR
+
 ├── app.py
 ├── test_captcha.py
 ├── templates/
