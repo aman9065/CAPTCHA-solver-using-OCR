@@ -55,5 +55,6 @@ Noise levels were increased from 10% to 90%, and OCR accuracy was tracked. Below
 | 75%         | ~45%             |
 | 90%         | Failed (1–2 chars unreadable) |
 
-📄 **[Click here to download the full Reading Accuracy Report](static/READING ACCURACY.pdf)**  
-*(Includes all screenshots and detailed explanation)*
+ 
+ .
+ 
