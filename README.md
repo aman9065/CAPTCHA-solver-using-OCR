@@ -19,7 +19,7 @@ It also includes login/signup functionality with password hashing and MySQL data
  🛠️ Tech Stack
 
 - Python 3
-  Flask
+- Flask
 - OpenCV
 - **Pytesseract**
 - MySQL
